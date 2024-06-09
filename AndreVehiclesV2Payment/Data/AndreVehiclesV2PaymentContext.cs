@@ -15,5 +15,16 @@ namespace AndreVehiclesV2Payment.Data
         }
 
         public DbSet<Models.Payment> Payment { get; set; } = default!;
+        public DbSet<Models.Pix> Pix { get; set; } = default!;
+        public DbSet<Models.Card> Card { get; set; } = default!;
+        public DbSet<Models.Boleto> Boleto { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Models.Payment>().ToTable("Payment");
+            modelBuilder.Entity<Models.Pix>().ToTable("Pix");
+            modelBuilder.Entity<Models.Card>().ToTable("Card");
+            modelBuilder.Entity<Models.Boleto>().ToTable("Boleto");
+        }
     }
 }

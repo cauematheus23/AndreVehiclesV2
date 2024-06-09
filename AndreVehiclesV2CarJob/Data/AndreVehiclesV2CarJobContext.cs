@@ -15,5 +15,13 @@ namespace AndreVehiclesV2CarJob.Data
         }
 
         public DbSet<Models.CarJob> CarJob { get; set; } = default!;
+        public DbSet<Models.Car> Car { get; set; } = default!;
+        public DbSet<Models.Job> Job { get; set; } = default!;
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Models.CarJob>().ToTable("CarJob");
+            modelBuilder.Entity<Models.Car>().ToTable("Car");
+            modelBuilder.Entity<Models.Job>().ToTable("Job");
+        }
     }
 }

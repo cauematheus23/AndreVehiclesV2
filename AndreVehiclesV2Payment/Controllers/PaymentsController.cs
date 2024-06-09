@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AndreVehiclesV2Payment.Data;
 using Models;
+using Models.DTO;
 
 namespace AndreVehiclesV2Payment.Controllers
 {
@@ -25,7 +26,7 @@ namespace AndreVehiclesV2Payment.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Payment>>> GetPayment()
         {
-            return await _context.Payment.ToListAsync();
+            return await _context.Payment.Include(p => p.Pix).Include(b => b.Boleto).Include(c => c.Card).ToListAsync();
         }
 
         // GET: api/Payments/5
@@ -76,8 +77,17 @@ namespace AndreVehiclesV2Payment.Controllers
         // POST: api/Payments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Payment>> PostPayment(Payment payment)
+        public async Task<ActionResult<Payment>> PostPayment(PaymentDTO DTO)
         {
+            Payment payment = new Payment(DTO);
+            payment.Pix = _context.Pix.Find(DTO.PixId);
+            payment.Card = _context.Card.Find(DTO.CreditCard);
+            payment.Boleto = _context.Boleto.Find(DTO.BoletoId);
+            _context.Payment.Add(payment);
+            if (_context.Payment == null)
+            {
+                return Problem("Entity set 'AndreVehiclesAPIContext.Payment'  is null.");
+            }
             _context.Payment.Add(payment);
             await _context.SaveChangesAsync();
 

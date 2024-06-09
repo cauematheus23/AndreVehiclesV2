@@ -25,14 +25,14 @@ namespace AndreVehiclesV2CarJob.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CarJob>>> GetCarJob()
         {
-            return await _context.CarJob.ToListAsync();
+            return await _context.CarJob.Include(c => c.Car).Include(j => j.Job).ToListAsync();
         }
 
         // GET: api/CarJobs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CarJob>> GetCarJob(int id)
         {
-            var carJob = await _context.CarJob.FindAsync(id);
+            var carJob = await _context.CarJob.Include(c => c.Car).Include(j => j.Job).Where(cj => cj.Id == id).SingleOrDefaultAsync(cp => cp.Id == id);
 
             if (carJob == null)
             {
