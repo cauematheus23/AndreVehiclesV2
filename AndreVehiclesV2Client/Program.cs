@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICepAPI, CepAPI>();
 
+// Register Refit interface
 builder.Services.AddRefitClient<ICepAPIRefit>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br")); // Ajuste para o URL correto da sua API
 
