@@ -21,7 +21,8 @@ namespace AndreVehiclesV2Client.Data
         {
             modelBuilder.Entity<Models.Person>().ToTable("Person");
             modelBuilder.Entity<Models.Client>().ToTable("Client");
-            modelBuilder.Entity<Models.Employee>().ToTable("Employee");
+            modelBuilder.Entity<Models.Adress>().ToTable("Adress");
+            
             modelBuilder.Entity<Models.Person>().HasKey(p => p.Document);
         }
     }

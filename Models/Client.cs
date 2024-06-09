@@ -19,12 +19,22 @@ namespace Models
         }
         public Client(ClientDTO clientDTO)
         {
-            this.Document = clientDTO.DocumentDTO;
+            this.Document = clientDTO.Document;
             this.Name = clientDTO.Name;
             this.BirthDate = clientDTO.BirthDate;
             this.Phone = clientDTO.Phone;
             this.Email = clientDTO.Email;
-            this.Income = clientDTO.IncomeDTO;
+            this.Income = clientDTO.Income;
+        }
+        public Client(ClientDTO clientDTO,Adress adress)
+        {
+            this.Document = clientDTO.Document;
+            this.Name = clientDTO.Name;
+            this.BirthDate = clientDTO.BirthDate;
+            this.Adress = adress;
+            this.Phone = clientDTO.Phone;
+            this.Email = clientDTO.Email;
+            this.Income = clientDTO.Income;
         }
     }
 }

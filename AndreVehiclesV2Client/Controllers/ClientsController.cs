@@ -10,6 +10,7 @@ using Models;
 using Models.DTO;
 using Microsoft.Data.SqlClient;
 using Dapper;
+using AndreVehiclesV2AdressAPI.Integration.Interfaces;
 
 namespace AndreVehiclesV2Client.Controllers
 {
@@ -18,10 +19,12 @@ namespace AndreVehiclesV2Client.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly AndreVehiclesV2ClientContext _context;
+        private readonly ICepAPI _cepAPI;
         private string Conn { get; set;}
-        public ClientsController(AndreVehiclesV2ClientContext context)
+        public ClientsController(AndreVehiclesV2ClientContext context,ICepAPI cepAPI)
         {
             _context = context;
+            _cepAPI = cepAPI;
             Conn = "Data Source=127.0.0.1; Initial Catalog=AndreVehiclesAPI; User Id=sa; Password=SqlServer2019!; TrustServerCertificate=true;";
         }
 
@@ -88,36 +91,27 @@ namespace AndreVehiclesV2Client.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<Client>> PostClient(Client client)
+        public async Task<ActionResult<Client>> PostClient(ClientDTO DTO)
         {
-            if (_context.Client == null)
-            {
-                return Problem("Entity set 'AndreVehiclesAPIContext.Client'  is null.");
-            }
+            var adress = await _cepAPI.GetAdressAPI(DTO.Adress.Cep);
+            
+            var address = new Adress(adress);
+            address.Number = DTO.Adress.Number;
+            address.Complement = DTO.Adress.Complement;
+
+            var client = new Client(DTO, address);
+           
             _context.Client.Add(client);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ClientExists(client.Document))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
+
 
             return CreatedAtAction("GetClient", new { id = client.Document }, client);
         }
         // DELETE: api/Clients/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClient(string id)
+        [HttpDelete("{document}")]
+        public async Task<IActionResult> DeleteClient(string document)
         {
-            var client = await _context.Client.FindAsync(id);
+            var client = await _context.Client.FindAsync(document);
             if (client == null)
             {
                 return NotFound();
