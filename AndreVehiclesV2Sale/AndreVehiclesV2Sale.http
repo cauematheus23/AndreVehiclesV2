@@ -1,0 +1,6 @@
+@AndreVehiclesV2Sale_HostAddress = http://localhost:5216
+
+GET {{AndreVehiclesV2Sale_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

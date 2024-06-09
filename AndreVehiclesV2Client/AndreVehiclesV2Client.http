@@ -1,0 +1,6 @@
+@AndreVehiclesV2Client_HostAddress = http://localhost:5192
+
+GET {{AndreVehiclesV2Client_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
