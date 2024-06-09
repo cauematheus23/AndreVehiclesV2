@@ -18,6 +18,18 @@ namespace Models
         {
             
         }
+        public Employee(EmployeeDTO employeeDTO)
+        {
+            this.Document = employeeDTO.Document;
+            this.Name = employeeDTO.Name;
+            this.BirthDate = employeeDTO.BirthDate;
+            this.Phone = employeeDTO.Phone;
+            this.Email = employeeDTO.Email;
+            Position p = new Position { Id = employeeDTO.PositionId };
+            this.Position = p;
+            this.ComissionValue = employeeDTO.EmployeeComissionValue;
+            this.Comission = employeeDTO.EmployeeComission;
+        }
         public Employee(EmployeeDTO employeeDTO,Adress adress)
         {
             this.Document = employeeDTO.Document;

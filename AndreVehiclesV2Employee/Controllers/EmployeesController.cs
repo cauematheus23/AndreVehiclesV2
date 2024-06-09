@@ -29,14 +29,13 @@ namespace AndreVehiclesV2Employee.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployee()
         {
-            return await _context.Employee.ToListAsync();
+            return await _context.Employee.Include(a => a.Adress).Include(p => p.Position).ToListAsync();
         }
-
         // GET: api/Employees/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(string id)
+        [HttpGet("{document}")]
+        public async Task<ActionResult<Employee>> GetEmployee(string document)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employee.Include(a => a.Adress).Include(p => p.Position).Where(e => e.Document == document ).SingleOrDefaultAsync(e => e.Document == document);
 
             if (employee == null)
             {
@@ -48,10 +47,14 @@ namespace AndreVehiclesV2Employee.Controllers
 
         // PUT: api/Employees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(string id, Employee employee)
+        [HttpPut("{document}")]
+        public async Task<IActionResult> PutEmployee(string document, EmployeeDTO DTO)
         {
-            if (id != employee.Document)
+            Employee employee = new Employee(DTO);
+            employee.Document = DTO.Document;
+            employee.Position = await _context.Position.FindAsync(employee.Position.Id);
+            _context.Employee.Add(employee);
+            if (document != employee.Document)
             {
                 return BadRequest();
             }
@@ -64,7 +67,7 @@ namespace AndreVehiclesV2Employee.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EmployeeExists(id))
+                if (!EmployeeExists(document))
                 {
                     return NotFound();
                 }
@@ -91,7 +94,6 @@ namespace AndreVehiclesV2Employee.Controllers
 
             var address = new Adress(adress)
             {
-                Id = null
                 ZipCode = adress.Cep,
                 Street = adress.Logradouro,
                 Neighborhood = adress.Bairro,
@@ -99,7 +101,6 @@ namespace AndreVehiclesV2Employee.Controllers
                 State = adress.Uf,
                 Number = employeeDTO.Adress.Number,
                 Complement = employeeDTO.Adress.Complement
-
             };
 
             Employee employee = new Employee(employeeDTO,address);
@@ -108,15 +109,14 @@ namespace AndreVehiclesV2Employee.Controllers
             employee.Position = await _context.FindAsync<Position>(employeeDTO.PositionId);
             _context.Employee.Add(employee);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetEmployee", new { id = employee.Document }, employee);
         }
 
         // DELETE: api/Employees/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(string id)
+        [HttpDelete("{document}")]
+        public async Task<IActionResult> DeleteEmployee(string document)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employee.FindAsync(document);
             if (employee == null)
             {
                 return NotFound();

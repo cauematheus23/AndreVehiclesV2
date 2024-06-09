@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AndreVehiclesV2AdressAPI\AndreVehiclesV2AdressAPI.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
 
 </Project>
